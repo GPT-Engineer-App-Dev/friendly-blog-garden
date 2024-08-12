@@ -1,10 +1,23 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast"
 
-const BlogPost = ({ blogPosts }) => {
+const BlogPost = ({ blogPosts, deletePost }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast()
+
+  const handleDelete = () => {
+    deletePost(parseInt(id));
+    toast({
+      title: "Post Deleted",
+      description: "The blog post has been successfully deleted.",
+    })
+    navigate('/');
+  };
   const post = blogPosts.find(post => post.id === parseInt(id));
 
   if (!post) {
@@ -18,7 +31,12 @@ const BlogPost = ({ blogPosts }) => {
           <ArrowLeft className="mr-2" size={20} />
           Back to Home
         </Link>
-        <ThemeSwitcher />
+        <div className="flex items-center space-x-2">
+          <Button variant="destructive" size="sm" onClick={handleDelete}>
+            <Trash2 className="mr-2 h-4 w-4" /> Delete Post
+          </Button>
+          <ThemeSwitcher />
+        </div>
       </div>
       <article className="prose lg:prose-xl mx-auto">
         <h1>{post.title}</h1>
